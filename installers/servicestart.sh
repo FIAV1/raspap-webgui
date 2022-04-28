@@ -10,26 +10,27 @@ DAEMONPATH="/lib/systemd/system/raspapd.service"
 OPENVPNENABLED=$(pidof openvpn | wc -l)
 
 positional=()
-while [[ $# -gt 0 ]]; do
-    key="$1"
+while [[ $# -gt 0 ]]
+do
+key="$1"
 
-    case $key in
-    -i | --interface)
-        interface="$2"
-        shift # past argument
-        shift # past value
-        ;;
-    -s | --seconds)
-        seconds="$2"
-        shift
-        shift
-        ;;
-    -a | --action)
-        action="$2"
-        shift
-        shift
-        ;;
-    esac
+case $key in
+    -i|--interface)
+    interface="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    -s|--seconds)
+    seconds="$2"
+    shift
+    shift
+    ;;
+    -a|--action)
+    action="$2"
+    shift
+    shift
+    ;;
+esac
 done
 set -- "${positional[@]}"
 
@@ -85,7 +86,7 @@ if [ -r "$CONFIGFILE" ]; then
     declare -A config
     while IFS=" = " read -r key value; do
         config["$key"]="$value"
-    done <"$CONFIGFILE"
+    done < "$CONFIGFILE"
 
     if [ "${config[BridgedEnable]}" = 1 ]; then
         if [ "${interface}" = "br0" ]; then
@@ -107,7 +108,7 @@ if [ -r "$CONFIGFILE" ]; then
         echo "Disabling systemd-networkd"
         systemctl disable systemd-networkd
 
-        ip link ls up | grep -q 'br0' &>/dev/null
+        ip link ls up | grep -q 'br0' &> /dev/null
         if [ $? == 0 ]; then
             echo "Removing br0 interface..."
             ip link set down br0
@@ -117,7 +118,7 @@ if [ -r "$CONFIGFILE" ]; then
         if [ "${config[WifiAPEnable]}" = 1 ]; then
             if [ "${interface}" = "uap0" ]; then
 
-                ip link ls up | grep -q 'uap0' &>/dev/null
+                ip link ls up | grep -q 'uap0' &> /dev/null
                 if [ $? == 0 ]; then
                     echo "Removing uap0 interface..."
                     iw dev uap0 del
